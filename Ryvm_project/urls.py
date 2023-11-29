@@ -24,7 +24,7 @@ from rest_framework_simplejwt.views import (
 )
 from clergy.views import clergy_view
 from adverticements.views import advert_view
-from SocietiesApp.views import *
+from socities.views import *
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -36,12 +36,13 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('admin/', admin.site.urls),
+    path('administration/', admin.site.urls),
     path('api/clergy/',clergy_view.as_view(), name='clergy_view'),
     path('api/adverts/',advert_view.as_view(), name='adverts_view'),
-    path('api/user/', include('User_app.user_url',namespace='user_api')),
-    path('api/prayer/', include('prayer.prayer_url',namespace='prayer_api')),path('api/society/<int:pk>/',society.as_view(),name='society_detail'),
-    path('api/society/', include('SocietiesApp.Society_url',namespace='society_api')),
+    path('api/user/', include('userapp.user_url',namespace='user_api')),
+    path('api/prayer/', include('prayer.prayer_url',namespace='prayer_api')),
+    path('api/society/<str:soc>/',society.as_view(),name='society_detail'),
+    path('api/society/', include('socities.Society_url',namespace='society_api')),
 ] 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

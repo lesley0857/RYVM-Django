@@ -53,8 +53,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'storages',
 
-    'User_app',
-    'SocietiesApp',
+    'userapp',
+    'socities',
     'prayer',
     'petitions',
     'clergy',
@@ -80,7 +80,7 @@ ROOT_URLCONF = 'Ryvm_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -101,20 +101,21 @@ WSGI_APPLICATION = 'Ryvm_project.wsgi.application'
 
 DATABASES = {
 
-    'default':{
-        "ENGINE":"django.db.backends.postgresql",
-        "NAME": os.getenv("NAME"),
-        "USER":os.getenv("USER"),
-        "PASSWORD":os.getenv("PASSWORD"),
-        "HOST":os.getenv("HOST"),
-        "PORT":os.getenv("PORT"),
-    }
-    
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # 'default':{
+    #     "ENGINE":"django.db.backends.postgresql",
+    #     "NAME": os.getenv("NAME"),
+    #     "USER":os.getenv("USER"),
+    #     "PASSWORD":os.getenv("PASSWORD"),
+    #     "HOST":os.getenv("HOST"),
+    #     "PORT":os.getenv("PORT"),
     # }
+    
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
 
 
 # Password validation
@@ -181,7 +182,15 @@ CORS_ALLOWED_ORIGINS = [
    'http://localhost:3000',
 ]
 
-AUTH_USER_MODEL = 'User_app.Custom_Base_User'
+AUTH_USER_MODEL = 'userapp.Custombaseuser'
+
+#SMTP Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT =  587
+EMAIL_USE_TLS = 'True'
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST")
+EMAIL_HOST_PASSWORD = os.getenv("SMTP_EMAIL_PWD")
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -190,7 +199,7 @@ AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=25),

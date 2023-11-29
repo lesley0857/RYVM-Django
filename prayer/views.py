@@ -15,8 +15,10 @@ import os
 class all_prayers(APIView):
     serializer_class = Prayer_serializer
     def get(self,request):
-        prayers = Prayers.objects.all()
-        serialized_data = Prayer_serializer(instance=prayers, many=True)
+        prayers = Prayers.objects.select_related('society')
+        print(prayers)
+        a = [i for i in prayers]
+        serialized_data = Prayer_serializer(instance=a, many=True)
         if serialized_data:
             return Response(serialized_data.data) 
         return Response({'email':'No user with such email'})
