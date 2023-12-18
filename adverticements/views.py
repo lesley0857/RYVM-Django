@@ -8,8 +8,9 @@ from rest_framework.views import APIView
 from .models import Adverts
 from .serializer import Adverts_serializer
 
+
 class advert_view(APIView,):
-    def get(self,request):
+    def get(self, request):
         qs = Adverts.objects.all()
-        serialized_data = Adverts_serializer(qs,many=True)
+        serialized_data = Adverts_serializer(qs, many=True)
         return Response(serialized_data.data)

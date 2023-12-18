@@ -14,12 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 from django.conf import settings
 import os
-from dotenv import load_dotenv
-from decouple import config
-
-load_dotenv()
 print(os.getenv("SECRET_KEY"))
-
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,13 +25,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = ''
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app','.now.sh', '127.0.0.1','localhost']
+ALLOWED_HOSTS = ['.vercel.app', 'django', '.now.sh', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -48,20 +43,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     # Other Apps
     'corsheaders',
     'rest_framework',
     'storages',
 
     'userapp',
+    'saintOfTheDay',
     'socities',
     'prayer',
     'petitions',
     'clergy',
     'adverticements',
     'posts',
+    'payments',
 
     'rest_framework_simplejwt',
+    'django_celery_results',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -80,7 +80,7 @@ ROOT_URLCONF = 'Ryvm_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -101,21 +101,20 @@ WSGI_APPLICATION = 'Ryvm_project.wsgi.application'
 
 DATABASES = {
 
-    # 'default':{
-    #     "ENGINE":"django.db.backends.postgresql",
-    #     "NAME": os.getenv("NAME"),
-    #     "USER":os.getenv("USER"),
-    #     "PASSWORD":os.getenv("PASSWORD"),
-    #     "HOST":os.getenv("HOST"),
-    #     "PORT":os.getenv("PORT"),
-    # }
-    
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        "ENGINE":   "django.db.backends.postgresql",
+        "NAME":     "",
+        "USER":     "postgres",
+        "PASSWORD": "",
+        "HOST":     "",
+        "PORT":     "13728",
     }
-}
 
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+}
 
 
 # Password validation
@@ -148,18 +147,25 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Celery Settings
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles','static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 # Default primary key field type
@@ -179,38 +185,38 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_HEADERS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
-   'http://localhost:3000',
+    'http://localhost:3000',
 ]
 
 AUTH_USER_MODEL = 'userapp.Custombaseuser'
 
-#SMTP Configuration
+# SMTP Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT =  587
-EMAIL_USE_TLS = 'True'
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST")
-EMAIL_HOST_PASSWORD = os.getenv("SMTP_EMAIL_PWD")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_ACCESS_KEY_ID = ""
+AWS_SECRET_ACCESS_KEY = ""
+AWS_STORAGE_BUCKET_NAME = ""
 
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
 
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=25),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=255),    #(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=255),  # (days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
-    "SIGNING_KEY":  os.getenv("SECRET_KEY"),
-    #settings.SECRET_KEY,
+    "SIGNING_KEY": '',
+    # settings.SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
     "ISSUER": None,

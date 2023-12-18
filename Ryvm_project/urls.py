@@ -15,20 +15,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
-    
+
 )
 from clergy.views import clergy_view
 from adverticements.views import advert_view
 from socities.views import *
+from saintOfTheDay.views import saint_view
+from posts.views import AnnouncementView
+from payments.views import PaymentView
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
 
 
 urlpatterns = [
@@ -37,20 +39,23 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('administration/', admin.site.urls),
-    path('api/clergy/',clergy_view.as_view(), name='clergy_view'),
-    path('api/adverts/',advert_view.as_view(), name='adverts_view'),
-    path('api/user/', include('userapp.user_url',namespace='user_api')),
-    path('api/prayer/', include('prayer.prayer_url',namespace='prayer_api')),
-    path('api/society/<str:soc>/',society.as_view(),name='society_detail'),
-    path('api/society/', include('socities.Society_url',namespace='society_api')),
-] 
+    path('api/paystack_payment/', PaymentView.as_view(), name='paymentView'),
+    path('api/announcement/', AnnouncementView.as_view(), name='announcementView'),
+    path('api/clergy/', clergy_view.as_view(), name='clergy_view'),
+    path('api/saints/', saint_view.as_view(), name='saint_view'),
+    path('api/adverts/', advert_view.as_view(), name='adverts_view'),
+    path('api/user/', include('userapp.user_url', namespace='user_api')),
+    path('api/prayer/', include('prayer.prayer_url', namespace='prayer_api')),
+    path('api/society/<str:soc>/', society.as_view(), name='society_detail'),
+    path('api/society/', include('socities.Society_url', namespace='society_api')),
+]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-   # urlpatterns += staticfiles_urlpatterns()
-#+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# urlpatterns += staticfiles_urlpatterns()
+# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 admin.site.site_header = "Ss.M.R.G.C.C. Youth Site Administration"
 admin.site.index_title = "Youth Site Database"
-admin.site.site_title  = "Archangel Youth Site"
+admin.site.site_title = "Archangel Youth Site"
 admin.site.login_template = "admin/login.html"
